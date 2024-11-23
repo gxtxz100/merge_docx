@@ -69,13 +69,20 @@ def copy_run_format(new_run, run):
         except:
             pass
 
+def natural_sort_key(s):
+    """实现 Windows 风格的自然排序"""
+    import re
+    # 将字符串分割成文本和数字部分
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split('([0-9]+)', str(s))]
+
 def merge_docx_files(folder_path):
     # 创建一个新的文档作为合并后的文档
     merged_doc = Document()
     
-    # 获取文件夹中所有的.docx文件
+    # 获取文件夹中所有的.docx文件并按 Windows 方式排序
     folder = Path(folder_path)
-    docx_files = sorted(folder.glob('*.docx'))
+    docx_files = sorted(folder.glob('*.docx'), key=lambda x: natural_sort_key(x.name))
     
     if not docx_files:
         print("错误：在指定文件夹中没有找到.docx文件")
@@ -147,7 +154,7 @@ def main():
     if len(sys.argv) > 1:
         folder_path = sys.argv[1]
     else:
-        folder_path = input("请输入包含Word文档的文件夹路径: ")
+        folder_path = input("请输入包含Word文档的文���夹路径: ")
     
     # 检查文件夹是否存在
     if not Path(folder_path).exists():
